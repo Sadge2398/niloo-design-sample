@@ -1,23 +1,58 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>نیلو · Niloo</title>
   <link rel="stylesheet" href="styles/tokens.css" />
   <style>
-    body { background: #f0eee9; }
+    body {
+      background: #f0eee9;
+    }
+
     /* Inside artboards we want the page background to look like a real site */
-    .ab-host { background: var(--paper); height: 100%; overflow-y: auto; overflow-x: hidden; direction: rtl; font-family: var(--font-body); color: var(--ink); }
-    .ab-host::-webkit-scrollbar { width: 6px; }
-    .ab-host::-webkit-scrollbar-thumb { background: #ddd; }
-    .iphone-host { direction: rtl; font-family: var(--font-body); color: var(--ink); height: 100%; overflow-y: auto; overflow-x: hidden; }
-    .iphone-host::-webkit-scrollbar { display: none; }
+    .ab-host {
+      background: var(--paper);
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      direction: rtl;
+      font-family: var(--font-body);
+      color: var(--ink);
+    }
+
+    .ab-host::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .ab-host::-webkit-scrollbar-thumb {
+      background: #ddd;
+    }
+
+    .iphone-host {
+      direction: rtl;
+      font-family: var(--font-body);
+      color: var(--ink);
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .iphone-host::-webkit-scrollbar {
+      display: none;
+    }
   </style>
 
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+    integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+    integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+    integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+    crossorigin="anonymous"></script>
 
   <script src="data/products.js"></script>
   <script type="text/babel" src="design-canvas.jsx"></script>
@@ -32,6 +67,7 @@
   <script type="text/babel" src="screens/mobile.jsx"></script>
   <script type="text/babel" src="screens/cart.jsx"></script>
 </head>
+
 <body>
   <div id="root"></div>
 
@@ -81,46 +117,8 @@
       ];
       const modules = ['Storefront', 'Admin Panel', 'POS', 'Inventory', 'Accounting', 'HRM', 'AI/RFM', 'Migration'];
       return (
-        <div style={ov.page}>
-          <div style={ov.kicker}>Niloo ERP · Design Showcase</div>
-          <div style={ov.hero}>
-            <div>
-              <h1 style={ov.title}>سیستم یکپارچه فروشگاه پوشاک چندشعبه</h1>
-              <p style={ov.lead}>
-                این دمو فاز اول تجربه مشتری را نشان می‌دهد: یک فروشگاه آنلاین مینیمال و mobile-first
-                که از ابتدا برای اتصال به انبار، فروش حضوری، حسابداری و تحلیل داده طراحی می‌شود.
-              </p>
-            </div>
-            <div style={ov.summary}>
-              <div style={ov.summaryLabel}>برآورد کل پروژه</div>
-              <div style={ov.summaryValue}>۲.۲B تومان</div>
-              <div style={ov.summaryMeta}>۲۸–۳۸ هفته · ۳ فاز مستقل</div>
-            </div>
-          </div>
-          <div style={ov.grid}>
-            <section style={ov.cardWide}>
-              <div style={ov.sectionTitle}>چرا الان؟</div>
-              <p style={{ ...ov.phaseText, marginTop: 0 }}>طراحی دمو از overallFa.md: نیلو باید در ERP پوشاک، خرده‌فروشی، انبار، POS، حسابداری و پیشنهاد شخصی‌شده نقش مرکزی ایفا کند.</p>
-            </section>
-            <aside style={ov.card}>
-              <div style={ov.sectionTitle}>ماژول‌های هدف</div>
-              <div style={ov.moduleWrap}>
-                {modules.map((m) => <span key={m} style={ov.module}>{m}</span>)}
-              </div>
-            </aside>
-          </div>
-          <div style={{ ...ov.phaseGrid, marginTop: 32 }}>
-            {phases.map((p, i) => (
-              <section key={i} style={ov.phase}>
-                <div style={ov.phaseNo}>{p.n}</div>
-                <div style={ov.phaseTitle}>{p.t}</div>
-                <p style={ov.phaseText}>{p.d}</p>
-                <div style={ov.phaseCost}>{p.c}</div>
-                <div style={{ ...ov.phaseLine, width: `${60 + i * 16}%` }} />
-              </section>
-            ))}
-          </div>
-        </div>
+        <div><h1>سیستم یکپارچه فروشگاه پوشاک چندشعبه
+        </h1></div>
       );
     }
 
@@ -245,7 +243,7 @@
       return (
         <div className="ab-host">
           <Header active="زن" />
-          <ScreenSearch onClose={() => {}} onProduct={() => {}} />
+          <ScreenSearch onClose={() => { }} onProduct={() => { }} />
         </div>
       );
     }
@@ -253,4 +251,5 @@
     ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 </body>
+
 </html>
