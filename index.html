@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>نیلو · Niloo</title>
+  <link rel="stylesheet" href="styles/tokens.css" />
+  <style>
+    body { background: #f0eee9; }
+    /* Inside artboards we want the page background to look like a real site */
+    .ab-host { background: var(--paper); height: 100%; overflow-y: auto; overflow-x: hidden; direction: rtl; font-family: var(--font-body); color: var(--ink); }
+    .ab-host::-webkit-scrollbar { width: 6px; }
+    .ab-host::-webkit-scrollbar-thumb { background: #ddd; }
+    .iphone-host { direction: rtl; font-family: var(--font-body); color: var(--ink); height: 100%; overflow-y: auto; overflow-x: hidden; }
+    .iphone-host::-webkit-scrollbar { display: none; }
+  </style>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script src="data/products.js"></script>
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="components/chrome.jsx"></script>
+  <script type="text/babel" src="components/product-card.jsx"></script>
+  <script type="text/babel" src="screens/home.jsx"></script>
+  <script type="text/babel" src="screens/plp.jsx"></script>
+  <script type="text/babel" src="screens/pdp.jsx"></script>
+  <script type="text/babel" src="screens/search.jsx"></script>
+  <script type="text/babel" src="screens/mobile.jsx"></script>
+  <script type="text/babel" src="screens/cart.jsx"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react">
+    const { useState, useEffect } = React;
+
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "accent": "#d6541b",
+      "showMegaMenuByDefault": false,
+      "imageDensity": "editorial"
+    }/*EDITMODE-END*/;
+
+    const ov = {
+      page: { height: '100%', background: '#fbfaf7', padding: 72, fontFamily: 'var(--font-body)', color: 'var(--ink)', display: 'flex', flexDirection: 'column', gap: 34, direction: 'ltr', textAlign: 'right' },
+      kicker: { fontSize: 12, letterSpacing: '0.24em', textTransform: 'uppercase', color: 'var(--saffron)', fontFamily: 'var(--font-latin)' },
+      hero: { display: 'grid', gridTemplateColumns: '1fr 360px', gap: 72, alignItems: 'end' },
+      title: { fontSize: 64, lineHeight: 1.08, fontWeight: 200, maxWidth: 760, letterSpacing: '-0.02em', margin: 0 },
+      lead: { fontSize: 18, lineHeight: 2, color: 'var(--ink-3)', maxWidth: 760, marginTop: 24 },
+      summary: { border: '1px solid var(--line)', background: 'white', padding: 32, minHeight: 190, display: 'flex', flexDirection: 'column', justifyContent: 'center' },
+      summaryLabel: { fontSize: 12, color: 'var(--mute)', marginBottom: 12 },
+      summaryValue: { fontSize: 48, fontWeight: 200, lineHeight: 1 },
+      summaryMeta: { fontSize: 13, color: 'var(--ink-3)', marginTop: 18 },
+      grid: { display: 'grid', gridTemplateColumns: '1.55fr 1fr', gap: 24 },
+      cardWide: { background: 'white', border: '1px solid var(--line)', padding: 30 },
+      card: { background: 'var(--bone)', border: '1px solid var(--line)', padding: 30 },
+      sectionTitle: { fontSize: 13, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--mute)', marginBottom: 24, fontFamily: 'var(--font-latin)' },
+      valueGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 },
+      value: { borderTop: '1px solid var(--line)', paddingTop: 16 },
+      valueTitle: { fontSize: 20, fontWeight: 300 },
+      valueText: { fontSize: 13, lineHeight: 1.8, color: 'var(--ink-3)', marginTop: 8 },
+      moduleWrap: { display: 'flex', flexWrap: 'wrap', gap: 10 },
+      module: { padding: '10px 14px', border: '1px solid var(--line)', background: 'white', fontSize: 13, fontFamily: 'var(--font-latin)' },
+      phaseGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginTop: 'auto' },
+      phase: { position: 'relative', overflow: 'hidden', background: 'white', border: '1px solid var(--line)', padding: 28, minHeight: 200 },
+      phaseNo: { fontSize: 12, color: 'var(--saffron)', marginBottom: 14 },
+      phaseTitle: { fontSize: 26, fontWeight: 300, fontFamily: 'var(--font-latin)' },
+      phaseText: { fontSize: 13, lineHeight: 1.8, color: 'var(--ink-3)', marginTop: 12 },
+      phaseCost: { position: 'absolute', insetInlineEnd: 28, bottom: 24, fontSize: 22, fontWeight: 300 },
+      phaseLine: { position: 'absolute', insetInlineStart: 0, bottom: 0, height: 3, background: 'var(--saffron)' },
+    };
+
+    function ProjectOverviewArtboard() {
+      const phases = [
+        { n: 'فاز ۱', t: 'Storefront + Admin', d: 'فروشگاه آنلاین، پنل مدیریت، POS سبک و زیرساخت آماده حسابداری', c: '۶۵۰M' },
+        { n: 'فاز ۲', t: 'Accounting Engine', d: 'فاکتور، پرداخت، تعویض/مرجوعی، مالیات و گزارش‌های مالی', c: '۷۰۰M' },
+        { n: 'فاز ۳', t: 'HRM + AI + Integration', d: 'منابع انسانی سبک، مهاجرت داده، پیش‌بینی فروش و یکپارچه‌سازی کامل', c: '۸۵۰M' },
+      ];
+      const modules = ['Storefront', 'Admin Panel', 'POS', 'Inventory', 'Accounting', 'HRM', 'AI/RFM', 'Migration'];
+      return (
+        <div style={ov.page}>
+          <div style={ov.kicker}>Niloo ERP · Design Showcase</div>
+          <div style={ov.hero}>
+            <div>
+              <h1 style={ov.title}>سیستم یکپارچه فروشگاه پوشاک چندشعبه</h1>
+              <p style={ov.lead}>
+                این دمو فاز اول تجربه مشتری را نشان می‌دهد: یک فروشگاه آنلاین مینیمال و mobile-first
+                که از ابتدا برای اتصال به انبار، فروش حضوری، حسابداری و تحلیل داده طراحی می‌شود.
+              </p>
+            </div>
+            <div style={ov.summary}>
+              <div style={ov.summaryLabel}>برآورد کل پروژه</div>
+              <div style={ov.summaryValue}>۲.۲B تومان</div>
+              <div style={ov.summaryMeta}>۲۸–۳۸ هفته · ۳ فاز مستقل</div>
+            </div>
+          </div>
+          <div style={ov.grid}>
+            <section style={ov.cardWide}>
+              <div style={ov.sectionTitle}>چرا الان؟</div>
+              <p style={{ ...ov.phaseText, marginTop: 0 }}>طراحی دمو از overallFa.md: نیلو باید در ERP پوشاک، خرده‌فروشی، انبار، POS، حسابداری و پیشنهاد شخصی‌شده نقش مرکزی ایفا کند.</p>
+            </section>
+            <aside style={ov.card}>
+              <div style={ov.sectionTitle}>ماژول‌های هدف</div>
+              <div style={ov.moduleWrap}>
+                {modules.map((m) => <span key={m} style={ov.module}>{m}</span>)}
+              </div>
+            </aside>
+          </div>
+          <div style={{ ...ov.phaseGrid, marginTop: 32 }}>
+            {phases.map((p, i) => (
+              <section key={i} style={ov.phase}>
+                <div style={ov.phaseNo}>{p.n}</div>
+                <div style={ov.phaseTitle}>{p.t}</div>
+                <p style={ov.phaseText}>{p.d}</p>
+                <div style={ov.phaseCost}>{p.c}</div>
+                <div style={{ ...ov.phaseLine, width: `${60 + i * 16}%` }} />
+              </section>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Desktop wrapper — full site at 1440 wide
+    function DesktopArtboard({ initialScreen = 'home' }) {
+      const [screen, setScreen] = useState(initialScreen);
+      const [product, setProduct] = useState(null);
+      const [searchOpen, setSearchOpen] = useState(false);
+
+      useEffect(() => {
+        // scroll to top when screen changes
+        const host = document.querySelector(`[data-host="${initialScreen}"]`);
+        if (host) host.scrollTop = 0;
+      }, [screen]);
+
+      const onProduct = (p) => { setProduct(p); setScreen('pdp'); };
+
+      const onNavigate = (k) => {
+        if (k === 'pdp' && product == null) setProduct(window.NILOO_DATA.PRODUCTS[2]);
+        if (k === 'cart') { setScreen('cart'); return; }
+        if (k === 'search') { setSearchOpen(true); return; }
+        setScreen(k);
+      };
+
+      let body;
+      if (searchOpen) body = <ScreenSearch onClose={() => setSearchOpen(false)} onProduct={(p) => { onProduct(p); setSearchOpen(false); }} />;
+      else if (screen === 'home') body = <ScreenHome onProduct={onProduct} />;
+      else if (screen === 'plp') body = <ScreenPLP onProduct={onProduct} />;
+      else if (screen === 'cart') body = <ScreenCart onContinueShopping={() => setScreen('plp')} onNavigate={onNavigate} />;
+      else if (screen === 'pdp') body = <ScreenPDP product={product} onBack={() => setScreen('plp')} onProduct={onProduct} />;
+
+      return (
+        <div className="ab-host" data-host={initialScreen} style={{ width: 1459, height: 1820 }}>
+          {!searchOpen && <Header
+            active="زن"
+            onSearch={() => setSearchOpen(true)}
+            onNav={onNavigate}
+            onCart={() => setScreen('cart')}
+            onSection={() => setScreen('plp')} />}
+          {body}
+          {!searchOpen && screen !== 'pdp' && <Footer />}
+        </div>
+      );
+    }
+
+    // Mobile wrapper — inside iPhone frame
+    function MobileArtboard({ initialScreen = 'home' }) {
+      const [screen, setScreen] = useState(initialScreen);
+      const [product, setProduct] = useState(null);
+      const onProduct = (p) => { setProduct(p); setScreen('pdp'); };
+      const goBag = () => setScreen('cart');
+
+      const onNavigateCart = (k) => {
+        if (k === 'pdp' && product == null) setProduct(window.NILOO_DATA.PRODUCTS[2]);
+        if (k === 'cart') { setScreen('cart'); return; }
+        setScreen(k);
+      };
+
+      let body;
+      if (screen === 'home') body = <MHome onProduct={onProduct} onNav={setScreen} onSearch={() => setScreen('search')} />;
+      else if (screen === 'plp') body = <MPLP onProduct={onProduct} onBack={() => setScreen('home')} onSearch={() => setScreen('search')} onBag={goBag} />;
+      else if (screen === 'pdp') body = <MPDP product={product} onBack={() => setScreen('plp')} onSearch={() => setScreen('search')} onBag={goBag} />;
+      else if (screen === 'search') body = <MSearch onClose={() => setScreen('home')} onProduct={onProduct} />;
+      else if (screen === 'cart') body = <MCart onBack={() => setScreen('home')} onNavigate={onNavigateCart} />;
+
+      return (
+        <IOSDevice width={390} height={844}>
+          <div className="iphone-host">{body}</div>
+        </IOSDevice>
+      );
+    }
+
+    function App() {
+      return (
+        <DesignCanvas>
+          <DCSection id="overview" title="نیلو · نمای کلی پروژه" subtitle="Context from overallFa.md — why this storefront exists inside a larger ERP roadmap">
+            <DCArtboard id="project-overview" label="Project Context" width={1440} height={900}>
+              <ProjectOverviewArtboard />
+            </DCArtboard>
+          </DCSection>
+
+          <DCSection id="desktop" title="نیلو · دسکتاپ" subtitle="Desktop · 1440 — Persian RTL e-commerce inspired by Zara's editorial minimalism">
+            <DCArtboard id="d-home" label="صفحه اصلی · Home" width={1459} height={1820}>
+              <DesktopArtboard initialScreen="home" />
+            </DCArtboard>
+            <DCArtboard id="d-plp" label="فهرست محصولات · PLP" width={1459} height={1820}>
+              <DesktopArtboard initialScreen="plp" />
+            </DCArtboard>
+            <DCArtboard id="d-pdp" label="جزئیات محصول · PDP" width={1459} height={1820}>
+              <DesktopArtboard initialScreen="pdp" />
+            </DCArtboard>
+            <DCArtboard id="d-search" label="جستجو · Search" width={1440} height={1100}>
+              <DesktopArtboardSearch />
+            </DCArtboard>
+            <DCArtboard id="d-cart" label="سبد خرید · Cart" width={1459} height={1820}>
+              <DesktopArtboard initialScreen="cart" />
+            </DCArtboard>
+          </DCSection>
+
+          <DCSection id="mobile" title="نیلو · موبایل" subtitle="iPhone · 390 — same flows, designed for thumb">
+            <DCArtboard id="m-home" label="صفحه اصلی" width={420} height={900}>
+              <MobileArtboard initialScreen="home" />
+            </DCArtboard>
+            <DCArtboard id="m-plp" label="فهرست محصولات" width={420} height={900}>
+              <MobileArtboard initialScreen="plp" />
+            </DCArtboard>
+            <DCArtboard id="m-pdp" label="جزئیات محصول" width={420} height={900}>
+              <MobileArtboard initialScreen="pdp" />
+            </DCArtboard>
+            <DCArtboard id="m-search" label="جستجو" width={420} height={900}>
+              <MobileArtboard initialScreen="search" />
+            </DCArtboard>
+            <DCArtboard id="m-cart" label="سبد خرید" width={420} height={940}>
+              <MobileArtboard initialScreen="cart" />
+            </DCArtboard>
+          </DCSection>
+        </DesignCanvas>
+      );
+    }
+
+    function DesktopArtboardSearch() {
+      return (
+        <div className="ab-host">
+          <Header active="زن" />
+          <ScreenSearch onClose={() => {}} onProduct={() => {}} />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
